@@ -1,0 +1,2242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imaginary Horizon - Multi-Dimensional Navigation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a0a2a 0%, #000814 100%);
+            color: #e6e6e6;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(0, 180, 216, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 80% 70%, rgba(157, 78, 221, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 40% 80%, rgba(255, 158, 0, 0.1) 0%, transparent 15%);
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(10, 25, 47, 0.8);
+            border-radius: 15px;
+            border: 2px solid #00b4d8;
+            box-shadow: 0 4px 20px rgba(0, 180, 216, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 30% 20%, rgba(0, 180, 216, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(157, 78, 221, 0.1) 0%, transparent 50%);
+            z-index: -1;
+        }
+        
+        h1 {
+            color: #00b4d8;
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0, 180, 216, 0.5);
+            background: linear-gradient(90deg, #00b4d8, #90e0ef);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+        
+        .subtitle {
+            color: #90e0ef;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+        
+        .score-display {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .score-item {
+            background: rgba(10, 25, 47, 0.9);
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid #00b4d8;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 8px rgba(0, 180, 216, 0.3);
+            transition: transform 0.2s;
+        }
+        
+        .score-item:hover {
+            transform: translateY(-2px);
+        }
+        
+        .score-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            border: 1px solid white;
+        }
+        
+        .score-name {
+            font-weight: bold;
+            color: #caf0f8;
+        }
+        
+        .score-value {
+            color: #ffb703;
+            font-weight: bold;
+            font-size: 1.1em;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        
+        .round-info {
+            margin-top: 10px;
+            font-size: 1.1em;
+            color: #90e0ef;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        }
+        
+        .game-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .board-container {
+            flex: 1;
+            min-width: 500px;
+            background: rgba(10, 25, 47, 0.8);
+            border-radius: 10px;
+            padding: 15px;
+            border: 2px solid #0077b6;
+            box-shadow: 0 4px 20px rgba(0, 119, 182, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .board-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(0, 119, 182, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(157, 78, 221, 0.1) 0%, transparent 40%);
+            z-index: -1;
+        }
+        
+        #gameBoard {
+            width: 100%;
+            height: 500px;
+            background: #0d1b2a;
+            border-radius: 8px;
+            display: block;
+            border: 1px solid #1b4965;
+            position: relative;
+        }
+        
+        .controls-panel {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(10, 25, 47, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            border: 2px solid #0077b6;
+            box-shadow: 0 4px 20px rgba(0, 119, 182, 0.4);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .controls-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(0, 119, 182, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(255, 158, 0, 0.1) 0%, transparent 40%);
+            z-index: -1;
+        }
+        
+        .status-info {
+            background: rgba(10, 35, 67, 0.7);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 1px solid #00b4d8;
+            box-shadow: 0 2px 10px rgba(0, 180, 216, 0.2);
+        }
+        
+        #gameStatus {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #00b4d8;
+            margin-bottom: 10px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        }
+        
+        #positionInfo {
+            font-size: 1.1em;
+            color: #caf0f8;
+        }
+        
+        .coordinates {
+            color: #ffb703;
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        
+        .hand-container {
+            margin-bottom: 20px;
+        }
+        
+        .hand-title {
+            color: #90e0ef;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        }
+        
+        .hand-description {
+            color: #caf0f8;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+        
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .card {
+            background: linear-gradient(145deg, #1b4965, #0d2b4a);
+            border: 2px solid #00b4d8;
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 80px;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(0, 180, 216, 0.1) 50%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 180, 216, 0.6);
+            background: linear-gradient(145deg, #2a6f8f, #1b4965);
+        }
+        
+        .card:hover::before {
+            opacity: 1;
+        }
+        
+        .card.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-color: #666;
+        }
+        
+        .card.disabled:hover {
+            transform: none;
+            box-shadow: none;
+            background: linear-gradient(145deg, #1b4965, #0d2b4a);
+        }
+        
+        .card.disabled::before {
+            opacity: 0;
+        }
+        
+        .swap-card {
+            background: linear-gradient(145deg, #2a6f8f, #1b4965);
+            border: 2px solid #ff9e00;
+        }
+        
+        .swap-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(255, 158, 0, 0.6);
+            background: linear-gradient(145deg, #3a8faf, #2a6f8f);
+        }
+        
+        .card-name {
+            font-weight: bold;
+            color: #00b4d8;
+            font-size: 0.9em;
+            line-height: 1.3;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 5px;
+        }
+        
+        .card-math {
+            font-size: 1em;
+            color: #caf0f8;
+            font-family: 'Courier New', monospace;
+            line-height: 1.2;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .swap-card .card-name {
+            color: #ff9e00;
+        }
+        
+        .special-card {
+            border-color: #ff9e00;
+            background: linear-gradient(145deg, #3d2c1a, #1b150d);
+        }
+        
+        .special-card .card-name {
+            color: #ff9e00;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 180, 216, 0.3);
+        }
+        
+        button {
+            padding: 10px 20px;
+            background: linear-gradient(to bottom, #00b4d8, #0077b6);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        button:hover::before {
+            left: 100%;
+        }
+        
+        button:hover {
+            background: linear-gradient(to bottom, #0096c7, #005f8a);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 180, 216, 0.6);
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .status.winner {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #00ff00;
+            color: #90ff90;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        @keyframes player-pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(1.03); box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+        }
+        
+        @keyframes player-vibrate {
+            0% { transform: translateX(0) translateY(0); }
+            25% { transform: translateX(-1px) translateY(-1px); }
+            50% { transform: translateX(1px) translateY(1px); }
+            75% { transform: translateX(-1px) translateY(1px); }
+            100% { transform: translateX(0) translateY(0); }
+        }
+        
+        @keyframes warp {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes star-twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        
+        #gameLog {
+            max-height: 150px;
+            overflow-y: auto;
+            background: rgba(0, 10, 20, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            border: 1px solid #1b4965;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+            flex-shrink: 0;
+        }
+        
+        .log-entry {
+            margin-bottom: 5px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid rgba(0, 180, 216, 0.2);
+            color: #90e0ef;
+        }
+        
+        .instructions {
+            background: rgba(10, 35, 67, 0.7);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 0.9em;
+            line-height: 1.5;
+            border: 1px solid #00b4d8;
+            box-shadow: 0 2px 10px rgba(0, 180, 216, 0.2);
+        }
+        
+        .instructions h3 {
+            color: #90e0ef;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+            color: #caf0f8;
+        }
+        
+        .story-highlight {
+            color: #ffb703;
+            font-weight: bold;
+        }
+        
+        .math-formula {
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            font-style: italic;
+            color: #90e0ef;
+            background: rgba(0, 20, 40, 0.5);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid #00b4d8;
+            display: inline-block;
+        }
+        
+        .player-setup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .player-setup-content {
+            background: linear-gradient(145deg, #0d1b2a, #1a1a2e);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #00b4d8;
+            box-shadow: 0 10px 40px rgba(0, 180, 216, 0.5);
+            width: 90%;
+            max-width: 900px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            max-height: 85vh;
+        }
+        
+        .player-setup-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(0, 180, 216, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(157, 78, 221, 0.1) 0%, transparent 50%);
+            z-index: -1;
+        }
+        
+        .player-setup-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .player-setup-header h2 {
+            color: #00b4d8;
+            font-size: 2.2em;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 10px rgba(0, 180, 216, 0.5);
+            background: linear-gradient(90deg, #00b4d8, #90e0ef);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+        
+        .player-setup-header .subtitle {
+            color: #90e0ef;
+            font-size: 1.1em;
+            font-style: italic;
+        }
+        
+        .setup-layout {
+            display: flex;
+            gap: 30px;
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        .story-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+        
+        .config-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            justify-content: space-between;
+        }
+        
+        .mission-explanation {
+            flex: 1;
+            background: rgba(10, 35, 67, 0.8);
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #00b4d8;
+            box-shadow: 0 2px 15px rgba(0, 180, 216, 0.3);
+            overflow-y: auto;
+            margin-bottom: 0;
+        }
+        
+        .mission-explanation h3 {
+            color: #90e0ef;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+            border-bottom: 1px solid rgba(0, 180, 216, 0.3);
+            padding-bottom: 10px;
+        }
+        
+        .mission-explanation ul {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .mission-explanation li {
+            margin-bottom: 12px;
+            color: #caf0f8;
+            line-height: 1.5;
+        }
+        
+        .mission-highlight {
+            color: #ffb703;
+            font-weight: bold;
+        }
+        
+        .config-section {
+            background: rgba(0, 20, 40, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #00b4d8;
+            margin-bottom: 20px;
+        }
+        
+        .config-section h3 {
+            color: #90e0ef;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        }
+        
+        .player-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .player-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .player-color-preview {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+        
+        .player-input input {
+            flex: 1;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #00b4d8;
+            border-radius: 5px;
+            color: white;
+            font-size: 1em;
+        }
+        
+        .player-input input:focus {
+            outline: none;
+            border-color: #90e0ef;
+            box-shadow: 0 0 5px rgba(144, 224, 239, 0.5);
+        }
+        
+        .player-type-select {
+            margin-left: 10px;
+            padding: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #00b4d8;
+            border-radius: 3px;
+            color: white;
+            min-width: 80px;
+        }
+        
+        .setup-instructions {
+            font-size: 0.9em;
+            color: #90e0ef;
+            text-align: center;
+            margin-top: 15px;
+            font-style: italic;
+            border-top: 1px solid rgba(0, 180, 216, 0.3);
+            padding-top: 15px;
+        }
+        
+        .setup-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .setup-buttons button {
+            flex: 1;
+            padding: 12px 20px;
+            font-size: 1.1em;
+        }
+        
+        .ai-thinking {
+            background: rgba(0, 180, 216, 0.2);
+            border: 2px solid #00b4d8;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            text-align: center;
+            display: none;
+        }
+        
+        .ai-thinking.active {
+            display: block;
+            animation: pulse 1.5s infinite;
+        }
+        
+        .game-over-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+        }
+        
+        .game-over-content {
+            background: linear-gradient(145deg, #0d1b2a, #1a1a2e);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #00b4d8;
+            box-shadow: 0 10px 40px rgba(0, 180, 216, 0.5);
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .game-over-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 30% 20%, rgba(0, 180, 216, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(255, 158, 0, 0.1) 0%, transparent 50%);
+            z-index: -1;
+        }
+        
+        .game-over-content h2 {
+            color: #00b4d8;
+            margin-bottom: 20px;
+            font-size: 2em;
+            text-shadow: 0 2px 10px rgba(0, 180, 216, 0.5);
+        }
+        
+        .game-over-content h3 {
+            color: #ff9e00;
+            margin-bottom: 15px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        }
+        
+        .final-scores {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .final-score-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: rgba(0, 20, 40, 0.6);
+            border-radius: 8px;
+            border: 1px solid #00b4d8;
+        }
+        
+        .final-score-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .final-score-value {
+            color: #ffb703;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        .game-over-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .game-over-buttons button {
+            flex: 1;
+        }
+        
+        @media (max-width: 900px) {
+            .game-area {
+                flex-direction: column;
+            }
+            
+            .board-container, .controls-panel {
+                min-width: 100%;
+            }
+            
+            .card {
+                min-width: 80px;
+                padding: 10px;
+            }
+            
+            .player-setup-content {
+                width: 95%;
+                padding: 20px;
+                max-height: 85vh;
+            }
+            
+            .setup-layout {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .mission-explanation, .config-panel {
+                max-height: 300px;
+                overflow-y: auto;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .setup-layout {
+                flex-direction: column;
+            }
+            
+            .mission-explanation, .config-panel {
+                max-height: 250px;
+            }
+            
+            .setup-buttons, .game-over-buttons {
+                flex-direction: column;
+            }
+            
+            .player-setup-header h2 {
+                font-size: 1.8em;
+            }
+        }
+        
+        .ship-icon {
+            font-size: 1.2em;
+            margin-right: 5px;
+        }
+        
+        .math-symbol {
+            font-weight: bold;
+            color: #ffb703;
+        }
+        
+        .current-player-indicator {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 0, 0.9);
+            color: #000;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            font-weight: bold;
+            z-index: 10;
+            white-space: nowrap;
+            animation: player-pulse 1.5s infinite;
+        }
+        
+        .ai-message {
+            text-align: center;
+            color: #ff9e00;
+            font-style: italic;
+            margin: 20px 0;
+            padding: 10px;
+            background: rgba(255, 158, 0, 0.1);
+            border-radius: 5px;
+            border: 1px solid rgba(255, 158, 0, 0.3);
+        }
+        
+        .last-game-settings {
+            background: rgba(0, 180, 216, 0.1);
+            border: 1px dashed #00b4d8;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #caf0f8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>IMAGINARY HORIZON</h1>
+            <div class="subtitle">Multi-Dimensional Space Navigation</div>
+            <div class="round-info" id="roundInfo">Sector 1 - Mission</div>
+            <div class="score-display" id="scoreDisplay">
+                </div>
+        </header>
+        
+        <div class="player-setup" id="playerSetup">
+            <div class="player-setup-content">
+                <div class="player-setup-header">
+                    <h2>IMAGINARY HORIZON</h2>
+                    <div class="subtitle">Multi-Dimensional Space Navigation</div>
+                </div>
+                
+                <div class="setup-layout">
+                    <!-- STORY/INTRODUCTION PANEL - LEFT SIDE -->
+                    <div class="story-panel">
+                        <div class="mission-explanation">
+                            <h3>THE MISSION: Navigate Home from the Fourth Dimension</h3>
+                            <ul>
+                                <li>Your ship is lost in a multi-dimensional nebula. To get home, you must be first to reach the wormhole by calculating jumps through "Complex Space."</li>
+                                <li><span class="mission-highlight">Mathematical Context:</span></br> Adding is a <strong>"Thruster"</strong> (linear movement). </br>
+Multiplying is a <strong>"Warp Turn"</strong> (multiplying by complex numbers involves rotation and scaling around the origin).</br>
+Complex conjugating is a <strong>"Reality Mirror"</strong> (reflection across the real axis).</li>
+                                <li>Ships start at random positions within the sector (-7 to 7 on both axes)</li>
+                                <li>Only maneuvres that keep you in the sector are allowed</li>
+                                <li>Click RECALIBRATE to reset all navigation systems (replaces all systems, but skips your turn)</li>
+
+
+<li style="margin-top: 20px; border-top: 1px solid rgba(0, 180, 216, 0.3); padding-top: 15px;">
+    <span class="mission-highlight" style="color: #ff9e00;">GAME TERMS OF USE</span>
+    <div style="margin-top: 10px; font-size: 0.85em; color: #a0d0f0; line-height: 1.4;">
+        <div style="margin-bottom: 8px;">
+            <strong>Ownership and Copyright:</strong> This game, including all code, assets, artwork, and sound, is the intellectual property of Ute Poelman. All rights are reserved.
+        </div>
+        <div style="margin-bottom: 8px;">
+            <strong>License to Use:</strong> Subject to these terms, the author grants you a personal, non-exclusive, non-transferable license to access and play the game for your own private, non-commercial entertainment. Educational use is explicitly permitted: Teachers, schools, and educational institutions may use this game in classroom settings and share it with students for teaching purposes at no cost.
+        </div>
+        <div style="margin-bottom: 8px;">
+            <strong>Restrictions:</strong> You are strictly prohibited from:
+            <ul style="padding-left: 20px; margin-top: 5px; margin-bottom: 8px;">
+                <li>Modifying the source code, assets, or logic of this game</li>
+                <li>Redistributing or "mirroring" the game files on other websites without express written permission</li>
+                <li>Selling or commercialising the game or any derivative works based upon it</li>
+                <li>Removing any copyright notices or branding from the source code or game interface</li>
+            </ul>
+        </div>
+        <div>
+            <strong>Disclaimer:</strong> The game is provided "as is," without warranty of any kind. The author is not liable for any damages arising from the use of this software.
+        </div>
+    </div>
+</li>
+
+
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- CONFIGURATION PANEL - RIGHT SIDE -->
+                    <div class="config-panel">
+                        <div class="config-section">
+                            <h3>Navigator Configuration</h3>
+                            <div class="player-inputs" id="playerInputs">
+                                <!-- Player inputs will be added here -->
+                            </div>
+                        </div>
+                        
+                        <div class="ai-thinking" id="aiThinkingIndicator">
+                            ⚡ Navigation Computer Calculating...
+                        </div>
+                        
+                        <div class="setup-instructions">
+                            Play against a friend or choose "AI" for autonomous navigation.
+                        </div>
+                        
+                        <div class="setup-buttons">
+                            <button id="startGame">Initialise Warp Drives</button>
+                            <button id="cancelSetup">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="game-over-screen" id="gameOverScreen">
+            <div class="game-over-content">
+                <h2 id="gameOverTitle">MISSION ACCOMPLISHED</h2>
+                <h3 id="tournamentWinnerText">Navigator returns home!</h3>
+                <div class="final-scores" id="finalScores">
+                    </div>
+                <div id="lastSettingsDisplay" class="last-game-settings" style="display: none;">
+                    <!-- Will show last game settings -->
+                </div>
+                <div class="game-over-buttons">
+                    <button id="playAgainSame">Play Again (Same Settings)</button>
+                    <button id="newExpedition">New Expedition</button>
+                    <button id="quitGame">Command Centre</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="game-area">
+            <div class="board-container">
+                <canvas id="gameBoard" width="500" height="500"></canvas>
+            </div>
+            
+            <div class="controls-panel">
+                <div class="status-info">
+                    <div id="gameStatus">Navigator 1's Turn</div>
+                    <div id="positionInfo">Position: <span class="coordinates">(7+7i)</span> | Wormhole: <span class="coordinates">(0, 0)</span></div>
+                </div>
+                
+                <div class="hand-container">
+                    <h3 class="hand-title">Navigation Systems (7 maneuvers + 1 recalibration)</h3>
+                    <p class="hand-description">Click a maneuver to execute. Used systems cycle to backup protocols. Red maneuvers are beyond sector limits. Use RECALIBRATE to reset all navigation systems (skips turn).</p>
+                    <div class="cards" id="playerHand">
+                        </div>
+                </div>
+                
+                <div class="controls">
+                    <button id="newGame">New Expedition</button>
+                </div>
+                
+                <div id="gameLog">
+                    <div class="log-entry">Configure fleet and mission parameters...</div>
+                </div>
+                
+                <div class="instructions">
+                    <h3>QUICK CONTROLS & TIPS</h3>
+                    <ul>
+                        <li><strong>Keyboard Shortcuts:</strong> Press 1-8 to use corresponding card</li>
+                        <li><strong>Thruster Burn (Addition):</strong> Green cards move your ship directly</li>
+                        <li><strong>Warp Rotation (Multiplication):</strong> Blue cards rotate and scale your position</li>
+                        <li><strong>Special Cards:</strong> Orange cards have unique effects</li>
+                        <li><strong>Card Cycling:</strong> After using a card, it's replaced with a new one</li>
+                        <li><strong>Recalibration:</strong> Use the orange RECALIBRATE card to refresh your hand (skips turn)</li>
+                        <li><strong>Wormhole Shift:</strong> Rare special card moves the target wormhole</li>
+                        <li><strong>Reality Mirror:</strong> Flips your position across the real axis</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game Configuration
+        const BOARD_MIN = -7;
+        const BOARD_MAX = 7;
+        const PLAYER_COLORS = ['#00b4d8', '#ff9e00', '#9d4edd', '#38b000'];
+        const SHIP_TYPES = ['🚀', '🛸', '🛰️', '🛸']; // Different ship icons
+        const REGULAR_CARDS_COUNT = 7; // Number of regular (non-swap) cards
+        const SWAP_CARD_POSITION = 7; // Position index for the swap card (0-based, so position 7 = 8th card)
+        const TURN_DELAY = 3000; // Increased from 2000 to 3000 ms (3 seconds delay between turns for card viewing)
+        const AI_THINKING_DELAY = 800; // AI thinking delay for realism
+
+        // Store last game settings for replay
+        let lastGameSettings = null;
+
+        // Complex Number Class
+        class ComplexPoint {
+            constructor(real, imag) {
+                this.x = real;
+                this.y = imag;
+            }
+            
+            add(other) {
+                return new ComplexPoint(this.x + other.x, this.y + other.y);
+            }
+            
+            subtract(other) {
+                return new ComplexPoint(this.x - other.x, this.y - other.y);
+            }
+            
+            multiply(other) {
+                // (a+bi)(c+di) = (ac - bd) + (ad + bc)i
+                const real = this.x * other.x - this.y * other.y;
+                const imag = this.x * other.y + this.y * other.x;
+                return new ComplexPoint(real, imag);
+            }
+            
+            conjugate() {
+                return new ComplexPoint(this.x, -this.y);
+            }
+            
+            toString() {
+                const realStr = this.x;
+                const imagStr = this.y >= 0 ? `+${this.y}i` : `${this.y}i`;
+                return `${realStr}${imagStr}`;
+            }
+            
+            toCoordinateString() {
+                return `(${this.x}, ${this.y})`;
+            }
+            
+            equals(other) {
+                return this.x === other.x && this.y === other.y;
+            }
+            
+            isOnBoard() {
+                return this.x >= BOARD_MIN && this.x <= BOARD_MAX && 
+                       this.y >= BOARD_MIN && this.y <= BOARD_MAX;
+            }
+            
+            isCorner() {
+                return (Math.abs(this.x) === 7 && Math.abs(this.y) === 7);
+            }
+            
+            distanceTo(other) {
+                // Euclidean distance
+                const dx = this.x - other.x;
+                const dy = this.y - other.y;
+                return Math.sqrt(dx * dx + dy * dy);
+            }
+            
+            manhattanDistance(other) {
+                // Manhattan distance (better for grid movement)
+                return Math.abs(this.x - other.x) + Math.abs(this.y - other.y);
+            }
+            
+            // Get angle (argument) in radians
+            getAngle() {
+                return Math.atan2(this.y, this.x);
+            }
+            
+            // Get magnitude (absolute value)
+            getMagnitude() {
+                return Math.sqrt(this.x * this.x + this.y * this.y);
+            }
+            
+            // Get polar coordinates
+            toPolar() {
+                return {
+                    r: this.getMagnitude(),
+                    theta: this.getAngle()
+                };
+            }
+            
+            // Create from polar coordinates
+            static fromPolar(r, theta) {
+                return new ComplexPoint(r * Math.cos(theta), r * Math.sin(theta));
+            }
+        }
+
+        // Parse complex number string to ComplexPoint
+        function parseComplex(str) {
+            str = str.trim();
+            
+            // Handle pure real numbers
+            if (!str.includes('i')) {
+                return new ComplexPoint(parseInt(str), 0);
+            }
+            
+            // Handle pure imaginary numbers
+            if (str === 'i' || str === '+i') return new ComplexPoint(0, 1);
+            if (str === '-i') return new ComplexPoint(0, -1);
+            
+            // Remove 'i' for parsing
+            let valStr = str.replace('i', '');
+            
+            if (valStr === '') valStr = '1';
+            if (valStr === '+') valStr = '1';
+            if (valStr === '-') valStr = '-1';
+            
+            return new ComplexPoint(0, parseInt(valStr));
+        }
+
+        // Card Definition
+        const CARDS = [
+            // Basic Additions (Thrusters) - Common (Count 4)
+            { type: 'add', val: new ComplexPoint(1, 0), name: 'Thruster', symbol: 'z + 1' },
+            { type: 'add', val: new ComplexPoint(-1, 0), name: 'Thruster', symbol: 'z - 1' },
+            { type: 'add', val: new ComplexPoint(0, 1), name: 'Thruster', symbol: 'z + i' },
+            { type: 'add', val: new ComplexPoint(0, -1), name: 'Thruster', symbol: 'z - i' },
+            { type: 'add', val: new ComplexPoint(1, 1), name: 'Thruster', symbol: 'z + (1+i)' },
+            { type: 'add', val: new ComplexPoint(-1, 1), name: 'Thruster', symbol: 'z + (-1+i)' },
+            { type: 'add', val: new ComplexPoint(1, -1), name: 'Thruster', symbol: 'z + (1-i)' },
+            { type: 'add', val: new ComplexPoint(-1, -1), name: 'Thruster', symbol: 'z + (-1-i)' },
+            
+            // Medium Thrusters (Magnitude 2) - Uncommon (Count 2)
+            { type: 'add', val: new ComplexPoint(2, 0), name: 'Thruster', symbol: 'z + 2' },
+            { type: 'add', val: new ComplexPoint(-2, 0), name: 'Thruster', symbol: 'z - 2' },
+            { type: 'add', val: new ComplexPoint(0, 2), name: 'Thruster', symbol: 'z + 2i' },
+            { type: 'add', val: new ComplexPoint(0, -2), name: 'Thruster', symbol: 'z - 2i' },
+
+            // Large Thrusters (Magnitude 3) - Rare (Count 1)
+            { type: 'add', val: new ComplexPoint(3, 0), name: 'Thruster', symbol: 'z + 3' },
+            { type: 'add', val: new ComplexPoint(-3, 0), name: 'Thruster', symbol: 'z - 3' },
+            { type: 'add', val: new ComplexPoint(0, 3), name: 'Thruster', symbol: 'z + 3i' },
+            { type: 'add', val: new ComplexPoint(0, -3), name: 'Thruster', symbol: 'z - 3i' },
+
+            // Maximum Thrusters (Magnitude 4) - Very Rare (Count 1)
+            { type: 'add', val: new ComplexPoint(4, 0), name: 'Thruster', symbol: 'z + 4' },
+            { type: 'add', val: new ComplexPoint(-4, 0), name: 'Thruster', symbol: 'z - 4' },
+            { type: 'add', val: new ComplexPoint(0, 4), name: 'Thruster', symbol: 'z + 4i' },
+            { type: 'add', val: new ComplexPoint(0, -4), name: 'Thruster', symbol: 'z - 4i' },
+            
+            // Multiplications (Warp Rotations)
+            { type: 'multiply', val: new ComplexPoint(0, 1), name: 'Warp Turn', symbol: 'z × i' },
+            { type: 'multiply', val: new ComplexPoint(0, -1), name: 'Warp Turn', symbol: 'z × (-i)' },
+            { type: 'multiply', val: new ComplexPoint(-1, 0), name: 'Warp Turn', symbol: 'z × (-1)' },
+            { type: 'multiply', val: new ComplexPoint(1, 1), name: 'Warp Turn', symbol: 'z × (1+i)' },
+            { type: 'multiply', val: new ComplexPoint(1, -1), name: 'Warp Turn', symbol: 'z × (1-i)' },
+            
+            // Special Cards
+            { type: 'swap', name: 'Recalibrate', symbol: '⟳', isSwapCard: true },
+            { type: 'special', name: 'Shift Wormhole', symbol: '🌀', special: 'move_target' },
+            { type: 'conjugate', name: 'Reality Mirror', symbol: 'z̄' }
+        ];
+
+        // Game State
+        let gameState = {
+            players: [],
+            currentPlayer: 0,
+            deck: [],
+            discardPile: [],
+            target: new ComplexPoint(0, 0),
+            winner: null,
+            roundWinner: null,
+            gameWinner: null,
+            isProcessingTurn: false,
+            lastMoveType: null // 'add', 'multiply', or 'conjugate'
+        };
+
+        // UI Elements
+        const gameBoardCanvas = document.getElementById('gameBoard');
+        const ctx = gameBoardCanvas.getContext('2d');
+        const playerHandDiv = document.getElementById('playerHand');
+        const gameStatusDiv = document.getElementById('gameStatus');
+        const positionInfoDiv = document.getElementById('positionInfo');
+        const gameLogDiv = document.getElementById('gameLog');
+        const newGameBtn = document.getElementById('newGame');
+        const startGameBtn = document.getElementById('startGame');
+        const cancelSetupBtn = document.getElementById('cancelSetup');
+        const playerSetupDiv = document.getElementById('playerSetup');
+        const playerInputsDiv = document.getElementById('playerInputs');
+        const gameOverScreen = document.getElementById('gameOverScreen');
+        const gameOverTitle = document.getElementById('gameOverTitle');
+        const tournamentWinnerText = document.getElementById('tournamentWinnerText');
+        const finalScoresDiv = document.getElementById('finalScores');
+        const playAgainSameBtn = document.getElementById('playAgainSame');
+        const newExpeditionBtn = document.getElementById('newExpedition');
+        const quitGameBtn = document.getElementById('quitGame');
+        const scoreDisplayDiv = document.getElementById('scoreDisplay');
+        const roundInfoDiv = document.getElementById('roundInfo');
+        const aiThinkingIndicator = document.getElementById('aiThinkingIndicator');
+        const lastSettingsDisplay = document.getElementById('lastSettingsDisplay');
+
+        // Initialize Player Setup
+        function initPlayerSetup() {
+            // Clear inputs
+            playerInputsDiv.innerHTML = '';
+            
+            // Add inputs for 2 players by default
+            addPlayerInput(1);
+            addPlayerInput(2);
+            
+            // Show setup modal
+            playerSetupDiv.style.display = 'flex';
+            
+            // Add initial instruction
+            logGameEvent("Configure fleet and mission parameters...");
+        }
+        
+        function addPlayerInput(num) {
+            const div = document.createElement('div');
+            div.className = 'player-input';
+            
+            const colorDiv = document.createElement('div');
+            colorDiv.className = 'player-color-preview';
+            colorDiv.style.backgroundColor = PLAYER_COLORS[num-1];
+            
+            const nameInput = document.createElement('input');
+            nameInput.type = 'text';
+            nameInput.placeholder = `Navigator ${num}`;
+            nameInput.value = `Navigator ${num}`;
+            nameInput.id = `player${num}Name`;
+            
+            const typeSelect = document.createElement('select');
+            typeSelect.className = 'player-type-select';
+            typeSelect.innerHTML = `
+                <option value="human">Human</option>
+                <option value="ai">AI</option>
+            `;
+            typeSelect.id = `player${num}Type`;
+            
+            div.appendChild(colorDiv);
+            div.appendChild(nameInput);
+            div.appendChild(typeSelect);
+            playerInputsDiv.appendChild(div);
+        }
+
+        // Start Game with configured names
+        function startGameWithNames() {
+            const player1Name = document.getElementById('player1Name').value || "Navigator 1";
+            const player2Name = document.getElementById('player2Name').value || "Navigator 2";
+            const player1Type = document.getElementById('player1Type').value;
+            const player2Type = document.getElementById('player2Type').value;
+            
+            // Save settings for replay
+            lastGameSettings = {
+                playerNames: [player1Name, player2Name],
+                playerTypes: [player1Type, player2Type]
+            };
+            
+            initGame([player1Name, player2Name], [player1Type, player2Type]);
+            playerSetupDiv.style.display = 'none';
+        }
+
+        // Initialize Game
+        function initGame(playerNames, playerTypes) {
+            gameState.players = [];
+            gameState.gameWinner = null;
+            
+            // Generate random starting positions
+            const startPositions = [];
+            for (let i = 0; i < playerNames.length; i++) {
+                startPositions.push(getRandomStartPosition(startPositions));
+            }
+            
+            for (let i = 0; i < playerNames.length; i++) {
+                gameState.players.push({
+                    name: playerNames[i],
+                    hand: [],
+                    type: playerTypes[i], // 'human' or 'ai'
+                    position: startPositions[i],
+                    path: [startPositions[i]],
+                    pathData: [{point: startPositions[i], type: 'start', multiplier: null}], // Store path with type and multiplier
+                    color: PLAYER_COLORS[i],
+                    shipType: SHIP_TYPES[i],
+                    wins: 0,
+                    lastMoveType: null // Track last move type for each player
+                });
+            }
+            
+            // Start first round
+            startNewRound();
+            
+            // Update UI
+            updateScoreDisplay();
+            
+            logGameEvent(`=== MISSION INITIATED ===`);
+            logGameEvent(`Navigators lost in multi-dimensional nebula.`);
+            logGameEvent(`Find the wormhole to return home!`);
+            
+            // Check if current player is AI and make move if so
+            if (gameState.players[gameState.currentPlayer].type === 'ai') {
+                setTimeout(() => makeAIMove(), AI_THINKING_DELAY);
+            }
+        }
+        
+        // Start a new round
+        function startNewRound() {
+            // Reset round-specific state
+            gameState.deck = [];
+            gameState.discardPile = [];
+            gameState.winner = null;
+            gameState.roundWinner = null;
+            gameState.isProcessingTurn = false;
+            gameState.lastMoveType = null;
+            
+            // Generate new random starting positions for players
+            const startPositions = [];
+            for (let i = 0; i < gameState.players.length; i++) {
+                startPositions.push(getRandomStartPosition(startPositions));
+            }
+            
+            // Reset player positions, paths, and move types for new round
+            gameState.players.forEach((player, i) => {
+                player.position = startPositions[i];
+                player.path = [startPositions[i]];
+                player.pathData = [{point: startPositions[i], type: 'start', multiplier: null}];
+                player.lastMoveType = null;
+            });
+            
+            // Randomize starting player for new round
+            gameState.currentPlayer = Math.floor(Math.random() * gameState.players.length);
+            
+            // Create and shuffle deck
+            createDeck();
+            shuffleDeck();
+            
+            // Deal initial hands (7 regular cards + 1 swap card per player)
+            gameState.players.forEach(player => {
+                player.hand = [];
+                // Add regular cards
+                for (let i = 0; i < REGULAR_CARDS_COUNT; i++) {
+                    player.hand.push(drawCard());
+                }
+                // Add swap card at specific position
+                const swapCard = CARDS.find(c => c.isSwapCard);
+                player.hand.push({...swapCard});
+            });
+            
+            // Place target
+            placeNewTarget();
+            
+            // Update UI
+            updateUI();
+            drawBoard();
+            
+            roundInfoDiv.innerText = `Mission in Progress`;
+        }
+        
+        // Get random start position (avoiding other start positions and origin)
+        function getRandomStartPosition(existingPositions) {
+            let pos;
+            let valid = false;
+            while (!valid) {
+                // Spawn near the edges but not exactly on edge to allow some movement
+                const edge = Math.random() < 0.5 ? 'horizontal' : 'vertical';
+                let x, y;
+                
+                if (edge === 'horizontal') {
+                    x = Math.floor(Math.random() * (BOARD_MAX - BOARD_MIN + 1)) + BOARD_MIN;
+                    y = Math.random() < 0.5 ? Math.floor(Math.random() * 3) + (BOARD_MAX - 2) : Math.floor(Math.random() * 3) + BOARD_MIN;
+                } else {
+                    y = Math.floor(Math.random() * (BOARD_MAX - BOARD_MIN + 1)) + BOARD_MIN;
+                    x = Math.random() < 0.5 ? Math.floor(Math.random() * 3) + (BOARD_MAX - 2) : Math.floor(Math.random() * 3) + BOARD_MIN;
+                }
+                
+                pos = new ComplexPoint(x, y);
+                
+                // Check if valid
+                valid = !pos.equals(new ComplexPoint(0, 0)) && // Not at origin
+                        existingPositions.every(p => !p.equals(pos)); // Not overlapping others
+            }
+            return pos;
+        }
+
+        // Create Deck
+        function createDeck() {
+            // Add multiple copies of movement cards
+            CARDS.forEach(card => {
+                if (!card.isSwapCard) {
+                    let count = 4; // Default count for standard movement
+                    
+                    // Special cards or Reality Mirror (conjugate) are rare
+                    if (card.type === 'special' || card.type === 'conjugate') {
+                        count = 2;
+                    } 
+                    // Movement logic rarity:
+                    else if (card.type === 'add' || card.type === 'multiply') {
+                        const magnitude = card.val.getMagnitude();
+                        
+                        if (magnitude >= 2.9) {
+                            count = 1; // Magnitude 3 & 4 (Rare)
+                        } else if (magnitude >= 1.9) {
+                            count = 2; // Magnitude 2 (Occasional)
+                        } else {
+                            count = 4; // Magnitude 1 & ~1.4 (Common)
+                        }
+                    }
+                    
+                    for (let i = 0; i < count; i++) {
+                        gameState.deck.push({...card});
+                    }
+                }
+            });
+        }
+
+        // Shuffle Deck
+        function shuffleDeck() {
+            for (let i = gameState.deck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [gameState.deck[i], gameState.deck[j]] = [gameState.deck[j], gameState.deck[i]];
+            }
+        }
+
+        // Draw a card from deck (reshuffle discard if empty, silently)
+        function drawCard() {
+            if (gameState.deck.length === 0) {
+                // Silently shuffle discard pile into deck
+                gameState.deck = [...gameState.discardPile];
+                gameState.discardPile = [];
+                shuffleDeck();
+            }
+            return gameState.deck.pop();
+        }
+        
+        // Place target at random location (not on corners and not on players)
+        function placeNewTarget() {
+            let newTarget;
+            let attempts = 0;
+            const maxAttempts = 100;
+            
+            do {
+                newTarget = new ComplexPoint(
+                    Math.floor(Math.random() * (BOARD_MAX - BOARD_MIN + 1)) + BOARD_MIN,
+                    Math.floor(Math.random() * (BOARD_MAX - BOARD_MIN + 1)) + BOARD_MIN
+                );
+                attempts++;
+                
+                // Check if valid location
+                const isOnCorner = newTarget.isCorner();
+                const isOnPlayer = gameState.players.some(player => player.position.equals(newTarget));
+                
+                if (!isOnCorner && !isOnPlayer) break;
+                
+            } while (attempts < maxAttempts);
+            
+            // If we couldn't find a valid spot, just force origin (0,0) as a fallback
+            if (attempts >= maxAttempts) {
+                newTarget = new ComplexPoint(0, 0);
+            }
+            
+            gameState.target = newTarget;
+            logGameEvent(`Wormhole detected at ${newTarget.toString()}!`);
+        }
+
+        // Check if move is legal
+        function isLegalMove(playerIndex, card) {
+            const player = gameState.players[playerIndex];
+            
+            // Special cards handling
+            if (card.isSwapCard) return true; // Can always swap
+            if (card.special === 'move_target') return true; // Can always move target
+            
+            let newPos;
+            if (card.type === 'add') {
+                newPos = player.position.add(card.val);
+            } else if (card.type === 'multiply') {
+                newPos = player.position.multiply(card.val);
+            } else if (card.type === 'conjugate') {
+                newPos = player.position.conjugate();
+            }
+            
+            return newPos.isOnBoard();
+        }
+
+        // Execute Move
+        function playCard(cardIndex) {
+            if (gameState.winner || gameState.gameWinner || gameState.isProcessingTurn) return;
+            
+            const player = gameState.players[gameState.currentPlayer];
+            const card = player.hand[cardIndex];
+            
+            // Check legality if not special
+            if (!card.isSwapCard && !card.special && !isLegalMove(gameState.currentPlayer, card)) {
+                // Log but don't play
+                logGameEvent(`Cannot execute ${card.name}: Destination out of sector!`);
+                
+                // Shake card animation
+                const cardEl = document.querySelectorAll('.card')[cardIndex];
+                if (cardEl) {
+                    cardEl.style.animation = 'none';
+                    cardEl.offsetHeight; /* trigger reflow */
+                    cardEl.style.animation = 'player-vibrate 0.4s';
+                }
+                return;
+            }
+            
+            gameState.isProcessingTurn = true;
+            
+            // Process the card
+            if (card.isSwapCard) {
+                // Swap logic: Discard entire hand and redraw (except the swap card itself)
+                logGameEvent(`${player.name} RECALIBRATING navigation systems...`);
+                
+                // Discard all regular cards
+                player.hand.forEach(c => {
+                    if (!c.isSwapCard) gameState.discardPile.push(c);
+                });
+                
+                // Draw new regular cards
+                const newHand = [];
+                for (let i = 0; i < REGULAR_CARDS_COUNT; i++) {
+                    newHand.push(drawCard());
+                }
+                
+                // Keep the swap card
+                const swapCard = CARDS.find(c => c.isSwapCard);
+                newHand.push({...swapCard});
+                
+                player.hand = newHand;
+                // Swapping consumes turn without moving
+                
+            } else if (card.special === 'move_target') {
+                logGameEvent(`${player.name} activates WORMHOLE SHIFT!`);
+                gameState.discardPile.push(card);
+                
+                // Move target
+                placeNewTarget();
+                
+                // Draw replacement
+                const newCard = drawCard();
+                player.hand[cardIndex] = newCard;
+                
+            } else {
+                // Movement card
+                let newPos;
+                if (card.type === 'add') {
+                    newPos = player.position.add(card.val);
+                    logGameEvent(`${player.name}: Thruster ${card.symbol} to ${newPos.toString()}`);
+                } else if (card.type === 'multiply') {
+                    newPos = player.position.multiply(card.val);
+                    logGameEvent(`${player.name}: Warp Turn ${card.symbol} to ${newPos.toString()}`);
+                } else if (card.type === 'conjugate') {
+                    newPos = player.position.conjugate();
+                    logGameEvent(`${player.name}: Reality Mirror ${card.symbol} to ${newPos.toString()}`);
+                }
+                
+                player.position = newPos;
+                player.path.push(newPos);
+                
+                // Store move type and multiplier for path visualization
+                player.pathData.push({
+                    point: newPos,
+                    type: card.type,
+                    multiplier: card.type === 'multiply' ? card.val : null
+                });
+                
+                player.lastMoveType = card.type;
+                
+                gameState.discardPile.push(card);
+                
+                // Check win condition
+                if (player.position.equals(gameState.target)) {
+                    handleRoundWin(player);
+                } else {
+                    // Draw replacement card
+                    const newCard = drawCard();
+                    player.hand[cardIndex] = newCard;
+                    logGameEvent(`${player.name}'s systems cycled to backup protocol.`);
+                }
+            }
+            
+            // Update UI immediately
+            updateUI();
+            drawBoard();
+            
+            // If game/round is over, return early
+            if (gameState.winner || gameState.gameWinner) {
+                gameState.isProcessingTurn = false;
+                aiThinkingIndicator.classList.remove('active');
+                return;
+            }
+            
+            // Delay before next turn to allow viewing cards (increased to 3 seconds)
+            setTimeout(() => {
+                // Move to next player
+                gameState.currentPlayer = (gameState.currentPlayer + 1) % gameState.players.length;
+                
+                // Reset processing flag
+                gameState.isProcessingTurn = false;
+                
+                // Update UI for next player
+                updateUI();
+                drawBoard();
+                
+                // Check if next player is AI and make move if so
+                if (gameState.players[gameState.currentPlayer].type === 'ai') {
+                    setTimeout(() => makeAIMove(), AI_THINKING_DELAY);
+                }
+            }, TURN_DELAY);
+        }
+        
+        // Handle Round Win
+        function handleRoundWin(player) {
+            gameState.winner = player;
+            gameState.roundWinner = player;
+            player.wins++;
+            
+            logGameEvent(`*** ${player.name} REACHED THE WORMHOLE! ***`);
+            endGame(player);
+        }
+        
+        // End Game
+        function endGame(winner) {
+            gameState.gameWinner = winner;
+            
+            setTimeout(() => {
+                gameOverScreen.style.display = 'flex';
+                gameOverTitle.innerText = "MISSION ACCOMPLISHED";
+                tournamentWinnerText.innerText = `${winner.name} successfully navigated home!`;
+                
+                // Display final scores
+                finalScoresDiv.innerHTML = '';
+                gameState.players.forEach(p => {
+                    const item = document.createElement('div');
+                    item.className = 'final-score-item';
+                    
+                    const nameDiv = document.createElement('div');
+                    nameDiv.className = 'final-score-name';
+                    
+                    const colorDiv = document.createElement('div');
+                    colorDiv.className = 'score-color';
+                    colorDiv.style.backgroundColor = p.color;
+                    
+                    nameDiv.appendChild(colorDiv);
+                    nameDiv.appendChild(document.createTextNode(p.name));
+                    
+                    const scoreVal = document.createElement('div');
+                    scoreVal.className = 'final-score-value';
+                    scoreVal.innerText = `${p.wins} wins`;
+                    
+                    item.appendChild(nameDiv);
+                    item.appendChild(scoreVal);
+                    finalScoresDiv.appendChild(item);
+                });
+                
+                // Display last game settings
+                if (lastGameSettings) {
+                    lastSettingsDisplay.style.display = 'block';
+                    lastSettingsDisplay.innerHTML = `
+                        <strong>Last Game Settings:</strong><br>
+                        ${lastGameSettings.playerNames[0]} (${lastGameSettings.playerTypes[0]}) vs 
+                        ${lastGameSettings.playerNames[1]} (${lastGameSettings.playerTypes[1]})
+                    `;
+                }
+
+            }, 1000);
+        }
+
+        // Draw Board
+        function drawBoard() {
+            // Clear board
+            ctx.fillStyle = '#0d1b2a';
+            ctx.fillRect(0, 0, gameBoardCanvas.width, gameBoardCanvas.height);
+            
+            const cellSize = gameBoardCanvas.width / (BOARD_MAX - BOARD_MIN + 1);
+            const gridSize = BOARD_MAX - BOARD_MIN;
+            
+            // Draw Grid
+            const marginX = cellSize / 2;
+            const marginY = cellSize / 2;
+            
+            ctx.strokeStyle = '#1b4965';
+            ctx.lineWidth = 1;
+            
+            // Vertical lines (real axis) - equally spaced
+            for (let x = 0; x <= gridSize; x++) {
+                const screenX = marginX + x * cellSize;
+                ctx.beginPath();
+                ctx.moveTo(screenX, marginY);
+                ctx.lineTo(screenX, marginY + gridSize * cellSize);
+                ctx.stroke();
+                
+                // X-axis labels (real numbers)
+                const realValue = BOARD_MIN + x;
+                ctx.fillStyle = '#90e0ef';
+                ctx.font = 'bold 14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(realValue.toString(), screenX, marginY + gridSize * cellSize + 15);
+            }
+            
+            // Horizontal lines (imaginary axis) - equally spaced
+            for (let y = 0; y <= gridSize; y++) {
+                const screenY = marginY + y * cellSize;
+                ctx.beginPath();
+                ctx.moveTo(marginX, screenY);
+                ctx.lineTo(marginX + gridSize * cellSize, screenY);
+                ctx.stroke();
+                
+                // Y-axis labels (imaginary numbers)
+                const imagValue = BOARD_MAX - y; // Invert for correct orientation
+                ctx.fillStyle = '#90e0ef';
+                ctx.font = 'bold 14px Arial';
+                ctx.textAlign = 'right';
+                
+                let label;
+                if (imagValue === 0) {
+                    label = '0';
+                } else if (imagValue === 1) {
+                    label = 'i';
+                } else if (imagValue === -1) {
+                    label = '-i';
+                } else {
+                    label = `${imagValue}i`;
+                }
+                
+                ctx.fillText(label, marginX, screenY + 5);
+            }
+            
+            // Draw axes with thicker lines
+            ctx.strokeStyle = 'rgba(0, 180, 216, 0.5)';
+            ctx.lineWidth = 2;
+            
+            // Real axis (horizontal) at y = 0
+            const zeroY = marginY + (BOARD_MAX - 0) * cellSize;
+            ctx.beginPath();
+            ctx.moveTo(marginX, zeroY);
+            ctx.lineTo(marginX + gridSize * cellSize, zeroY);
+            ctx.stroke();
+            
+            // Imaginary axis (vertical) at x = 0
+            const zeroX = marginX + (0 - BOARD_MIN) * cellSize;
+            ctx.beginPath();
+            ctx.moveTo(zeroX, marginY);
+            ctx.lineTo(zeroX, marginY + gridSize * cellSize);
+            ctx.stroke();
+            
+            // Draw paths for all players
+            gameState.players.forEach(player => {
+                if (player.path.length > 1) {
+                    for (let i = 0; i < player.path.length - 1; i++) {
+                        const start = player.path[i];
+                        const end = player.path[i+1];
+                        const moveType = player.pathData[i+1].type;
+                        const endData = player.pathData[i+1];
+                        
+                        const startScreenX = marginX + (start.x - BOARD_MIN) * cellSize;
+                        const startScreenY = marginY + (BOARD_MAX - start.y) * cellSize;
+                        const endScreenX = marginX + (end.x - BOARD_MIN) * cellSize;
+                        const endScreenY = marginY + (BOARD_MAX - end.y) * cellSize;
+                        
+                        if (moveType === 'add') {
+                            ctx.strokeStyle = player.color + '80'; // 50% opacity
+                            ctx.lineWidth = 2;
+                            ctx.beginPath();
+                            ctx.moveTo(startScreenX, startScreenY);
+                            ctx.lineTo(endScreenX, endScreenY);
+                            ctx.stroke();
+                            
+                            // Add arrow head for addition moves
+                            if (moveType === 'add') {
+                                const arrowSize = cellSize / 6;
+                                const angle = Math.atan2(endScreenY - startScreenY, endScreenX - startScreenX);
+                                
+                                // Draw arrow head
+                                ctx.fillStyle = player.color;
+                                ctx.beginPath();
+                                ctx.moveTo(endScreenX, endScreenY);
+                                ctx.lineTo(
+                                    endScreenX - arrowSize * Math.cos(angle - Math.PI/6),
+                                    endScreenY - arrowSize * Math.sin(angle - Math.PI/6)
+                                );
+                                ctx.lineTo(
+                                    endScreenX - arrowSize * Math.cos(angle + Math.PI/6),
+                                    endScreenY - arrowSize * Math.sin(angle + Math.PI/6)
+                                );
+                                ctx.closePath();
+                                ctx.fill();
+                            }
+                        } else if (moveType === 'multiply') {
+                            // Use the stored multiplier from when the move was made
+                            const multiplier = endData.multiplier;
+                            if (multiplier) {
+                                // Logarithmic spiral for multiplication moves (centered at origin)
+                                drawMultiplicationPath(ctx, start, end, multiplier, player.color, marginX, marginY, cellSize);
+                            } else {
+                                // Fallback: draw straight line if no multiplier stored
+                                ctx.strokeStyle = player.color + '80'; // 50% opacity
+                                ctx.lineWidth = 2;
+                                ctx.beginPath();
+                                ctx.moveTo(startScreenX, startScreenY);
+                                ctx.lineTo(endScreenX, endScreenY);
+                                ctx.stroke();
+                            }
+                        } else if (moveType === 'conjugate') {
+                            // Draw dashed straight line for conjugate/flip
+                            ctx.strokeStyle = player.color + '80'; // 50% opacity
+                            ctx.lineWidth = 2;
+                            ctx.setLineDash([5, 5]); // Dashed line
+                            ctx.beginPath();
+                            ctx.moveTo(startScreenX, startScreenY);
+                            ctx.lineTo(endScreenX, endScreenY);
+                            ctx.stroke();
+                            ctx.setLineDash([]); // Reset dash
+                        }
+                    }
+                }
+            });
+            
+            // Draw target (wormhole) - at grid intersection
+            const targetX = marginX + (gameState.target.x - BOARD_MIN) * cellSize;
+            const targetY = marginY + (BOARD_MAX - gameState.target.y) * cellSize;
+            
+            // Wormhole effect
+            const gradient = ctx.createRadialGradient(targetX, targetY, 0, targetX, targetY, cellSize/1.5);
+            gradient.addColorStop(0, '#ffffff');
+            gradient.addColorStop(0.2, '#caf0f8');
+            gradient.addColorStop(0.4, '#00b4d8');
+            gradient.addColorStop(1, 'transparent');
+            
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(targetX, targetY, cellSize/1.5, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Swirling effect lines
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < 4; i++) {
+                ctx.beginPath();
+                ctx.arc(targetX, targetY, cellSize/3, i * Math.PI/2, i * Math.PI/2 + Math.PI/2);
+                ctx.stroke();
+            }
+            
+            // Draw players
+            gameState.players.forEach((player, index) => {
+                const playerX = marginX + (player.position.x - BOARD_MIN) * cellSize;
+                const playerY = marginY + (BOARD_MAX - player.position.y) * cellSize;
+                
+                // Player glow
+                const gradient4 = ctx.createRadialGradient(
+                    playerX, playerY, 0,
+                    playerX, playerY, cellSize/2
+                );
+                gradient4.addColorStop(0, player.color + '80');
+                gradient4.addColorStop(1, 'transparent');
+                
+                ctx.fillStyle = gradient4;
+                ctx.beginPath();
+                ctx.arc(playerX, playerY, cellSize/2, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Draw player ship (circle at intersection)
+                ctx.fillStyle = player.color;
+                ctx.beginPath();
+                ctx.arc(playerX, playerY, cellSize/3, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Draw ship outline
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.arc(playerX, playerY, cellSize/3, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                // Draw ship type indicator (emoji)
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 16px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                let indicator = player.shipType;
+                if (player.type === 'ai') {
+                    indicator += ' ⚡';
+                }
+                ctx.fillText(indicator, playerX, playerY);
+                
+                // Highlight current player with enhanced pulsing animation
+                if (index === gameState.currentPlayer && !gameState.winner) {
+                    const indicatorDiv = document.createElement('div');
+                    indicatorDiv.className = 'current-player-indicator';
+                    indicatorDiv.innerText = "YOUR TURN";
+                    
+                    // We can't easily add DOM element on top of canvas at exact coords without absolute positioning math
+                    // So we'll draw a special ring on canvas
+                    
+                    ctx.strokeStyle = '#ffff00';
+                    ctx.lineWidth = 3;
+                    ctx.setLineDash([5, 5]);
+                    ctx.beginPath();
+                    ctx.arc(playerX, playerY, cellSize/2 + 2, 0, Math.PI * 2);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+            });
+        }
+
+    // Draw logarithmic spiral path for multiplication (centered at origin)
+    function drawMultiplicationPath(ctx, startPoint, endPoint, multiplier, color, marginX, marginY, cellSize) {
+        // Convert points to screen coordinates
+        const startScreenX = marginX + (startPoint.x - BOARD_MIN) * cellSize;
+        const startScreenY = marginY + (BOARD_MAX - startPoint.y) * cellSize;
+        
+        // Origin in screen coordinates
+        const originX = marginX + (0 - BOARD_MIN) * cellSize;
+        const originY = marginY + (BOARD_MAX - 0) * cellSize;
+        
+        // Get polar coordinates relative to origin
+        const startRel = startPoint.subtract(new ComplexPoint(0, 0));
+        const startPolar = startRel.toPolar();
+        const multiplierPolar = multiplier.toPolar();
+        
+        ctx.strokeStyle = color + '80'; // 50% opacity
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        
+        // Check if it's a pure rotation (magnitude is approx 1)
+        if (Math.abs(multiplierPolar.r - 1) < 0.01) {
+            // Draw circular arc
+            const radius = startPolar.r * cellSize;
+            
+            // Canvas angles are inverted (y-axis points down) compared to standard math
+            // So a complex angle of theta corresponds to -theta in canvas
+            const canvasStartAngle = -startPolar.theta;
+            
+            // The end angle is the start angle rotated by the multiplier's angle.
+            // In canvas coords, we subtract the angle because of the inversion.
+            const canvasEndAngle = canvasStartAngle - multiplierPolar.theta;
+            
+            // Determine direction:
+            // Positive complex rotation (CCW, e.g., +i) corresponds to 
+            // the 'anticlockwise' direction in canvas arc method.
+            const anticlockwise = multiplierPolar.theta > 0;
+            
+            ctx.arc(originX, originY, radius, canvasStartAngle, canvasEndAngle, anticlockwise);
+        } else {
+            // Logarithmic spiral for general multiplication
+            // We interpolate based on the operation: z' = z * (scale * e^i*theta)^t
+            const steps = 50;
+            const scale = multiplierPolar.r;
+            const rotation = multiplierPolar.theta;
+            
+            ctx.moveTo(startScreenX, startScreenY);
+            
+            for (let i = 1; i <= steps; i++) {
+                const t = i / steps;
+                
+                // Interpolate angle and radius
+                const theta = startPolar.theta + t * rotation;
+                const r = startPolar.r * Math.pow(scale, t);
+                
+                // Convert polar to Cartesian
+                const point = ComplexPoint.fromPolar(r, theta);
+                
+                const screenX = marginX + (point.x - BOARD_MIN) * cellSize;
+                const screenY = marginY + (BOARD_MAX - point.y) * cellSize;
+                
+                ctx.lineTo(screenX, screenY);
+            }
+        }
+        
+        ctx.stroke();
+    }
+
+        // Update UI elements
+        function updateUI() {
+            const player = gameState.players[gameState.currentPlayer];
+            
+            gameStatusDiv.innerText = `${player.name}'s Turn`;
+            gameStatusDiv.style.color = player.color;
+            
+            positionInfoDiv.innerHTML = `Position: <span class="coordinates">${player.position.toString()}</span> | Wormhole: <span class="coordinates">${gameState.target.toString()}</span>`;
+            
+            // Update hand
+            playerHandDiv.innerHTML = '';
+            player.hand.forEach((card, index) => {
+                const cardDiv = document.createElement('div');
+                cardDiv.className = 'card';
+                if (card.isSwapCard) cardDiv.classList.add('swap-card');
+                if (card.special) cardDiv.classList.add('special-card');
+                
+                // Check if playable
+                const isPlayable = card.isSwapCard || card.special || isLegalMove(gameState.currentPlayer, card);
+                
+                if (!isPlayable && player.type === 'human' && !gameState.winner && !gameState.isProcessingTurn) {
+                    cardDiv.classList.add('disabled');
+                }
+                
+                const nameDiv = document.createElement('div');
+                nameDiv.className = 'card-name';
+                nameDiv.innerText = card.name;
+                
+                const mathDiv = document.createElement('div');
+                mathDiv.className = 'card-math';
+                mathDiv.innerText = card.symbol;
+                
+                cardDiv.appendChild(nameDiv);
+                cardDiv.appendChild(mathDiv);
+                
+                if (player.type === 'human' && !gameState.winner && !gameState.isProcessingTurn) {
+                    cardDiv.onclick = () => playCard(index);
+                }
+                
+                playerHandDiv.appendChild(cardDiv);
+            });
+            
+            // Show/Hide AI indicator
+            if (player.type === 'ai' && !gameState.winner) {
+                aiThinkingIndicator.classList.add('active');
+            } else {
+                aiThinkingIndicator.classList.remove('active');
+            }
+        }
+        
+        // Update Score Display
+        function updateScoreDisplay() {
+            scoreDisplayDiv.innerHTML = '';
+            
+            gameState.players.forEach(p => {
+                const item = document.createElement('div');
+                item.className = 'score-item';
+                
+                const color = document.createElement('div');
+                color.className = 'score-color';
+                color.style.backgroundColor = p.color;
+                
+                const name = document.createElement('div');
+                name.className = 'score-name';
+                name.innerText = p.name;
+                
+                item.appendChild(color);
+                item.appendChild(name);
+                
+                scoreDisplayDiv.appendChild(item);
+            });
+        }
+        
+        // AI Logic
+        function makeAIMove() {
+            if (gameState.winner || gameState.gameWinner) return;
+            
+            const player = gameState.players[gameState.currentPlayer];
+            
+            // 1. Identify valid moves
+            const validMoves = player.hand.map((card, index) => {
+                return { card, index, legal: card.isSwapCard || card.special || isLegalMove(gameState.currentPlayer, card) };
+            }).filter(m => m.legal);
+            
+            if (validMoves.length === 0) {
+                // Should not happen as swap is always valid, but just in case
+                console.error("AI has no valid moves!");
+                return;
+            }
+            
+            // 2. Evaluate moves
+            let bestMove = null;
+            let bestScore = -Infinity;
+            
+            validMoves.forEach(move => {
+                let score = 0;
+                
+                if (move.card.isSwapCard) {
+                    // Only swap if hand is terrible (no moves that get closer)
+                    // We'll give it a low baseline score
+                    score = -5;
+                } else if (move.card.special === 'move_target') {
+                    // Use if very far from target
+                    const dist = player.position.distanceTo(gameState.target);
+                    if (dist > 8) score = 5; else score = -2;
+                } else {
+                    // Movement card
+                    let newPos;
+                    if (move.card.type === 'add') newPos = player.position.add(move.card.val);
+                    else if (move.card.type === 'multiply') newPos = player.position.multiply(move.card.val);
+                    else if (move.card.type === 'conjugate') newPos = player.position.conjugate();
+                    
+                    const currentDist = player.position.distanceTo(gameState.target);
+                    const newDist = newPos.distanceTo(gameState.target);
+                    const improvement = currentDist - newDist;
+                    
+                    score = improvement * 10;
+                    
+                    // Bonus for winning
+                    if (newDist === 0) score += 1000;
+                    
+                    // Bonus for getting very close
+                    if (newDist < 2) score += 5;
+                }
+                
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMove = move;
+                }
+            });
+            
+            // 3. Execute best move
+            playCard(bestMove.index);
+        }
+        
+        // Utility: Log game events
+        function logGameEvent(message) {
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            const time = new Date().toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            entry.innerText = `[${time}] ${message}`;
+            gameLogDiv.insertBefore(entry, gameLogDiv.firstChild);
+        }
+
+        // Event Listeners
+        newGameBtn.addEventListener('click', () => {
+            initPlayerSetup();
+        });
+        
+        startGameBtn.addEventListener('click', startGameWithNames);
+        
+        cancelSetupBtn.addEventListener('click', () => {
+            playerSetupDiv.style.display = 'none';
+        });
+        
+        // Play again with same settings
+        playAgainSameBtn.addEventListener('click', () => {
+            gameOverScreen.style.display = 'none';
+            if (lastGameSettings) {
+                initGame(lastGameSettings.playerNames, lastGameSettings.playerTypes);
+            } else {
+                initPlayerSetup();
+            }
+        });
+        
+        // New expedition (back to setup)
+        newExpeditionBtn.addEventListener('click', () => {
+            gameOverScreen.style.display = 'none';
+            initPlayerSetup();
+        });
+        
+        quitGameBtn.addEventListener('click', () => {
+            location.reload();
+        });
+        
+        // Enter key in name inputs
+        document.getElementById('playerInputs').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                startGameWithNames();
+            }
+        });
+        
+        // Initialize the game on load
+        window.addEventListener('load', () => {
+            // Show player setup screen first
+            initPlayerSetup();
+            
+            // Add keyboard shortcuts during gameplay
+            document.addEventListener('keydown', (e) => {
+                if (gameState.winner || gameState.isProcessingTurn || gameState.players.length === 0 || gameState.gameWinner) return;
+                
+                const player = gameState.players[gameState.currentPlayer];
+                if (player.type !== 'human') return;
+                
+                const validCards = player.hand.filter((card, index) => 
+                    card.isSwapCard || card.special || isLegalMove(gameState.currentPlayer, card)
+                );
+                
+                if (e.key >= '1' && e.key <= '8' && parseInt(e.key) <= validCards.length) {
+                    const cardIndex = player.hand.indexOf(validCards[parseInt(e.key) - 1]);
+                    if (cardIndex !== -1) {
+                        playCard(cardIndex);
+                    }
+                } else if (e.key === 'n' || e.key === 'N') {
+                    newGameBtn.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
